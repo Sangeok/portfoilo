@@ -1,4 +1,11 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
+import { projectsData } from "../data/projects";
+import ProjectModal from "./ProjectModal";
+import ProjectDetail from "./ProjectDetail";
+import { Project } from "../types/project";
 
 const ArrowIcon = ({ className }: { className?: string }) => (
   <svg
@@ -14,12 +21,7 @@ const ArrowIcon = ({ className }: { className?: string }) => (
 );
 
 export default function Projects() {
-  const projects = [
-    { id: 1, category: "Web APP", title: "Video Editor", size: "large", image: "/videoEditorH.png" },
-    { id: 2, category: "Web App", title: "AI-Podcast-Clipper", size: "small", image: "/Apch.png" },
-    { id: 3, category: "App", title: "GeoGenieX", size: "small", image: "/metabizImage.png" },
-    { id: 4, category: "Web App", title: "Video Asset Generator", size: "large", image: "/videoAssetGenerator.png" },
-  ];
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   return (
     <section className="py-32 px-6 max-w-7xl mx-auto w-full">
@@ -29,10 +31,11 @@ export default function Projects() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-        {projects.map((project) => (
+        {projectsData.map((project) => (
           <div
             key={project.id}
-            className={`group relative rounded-none overflow-hidden ${
+            onClick={() => setSelectedProject(project)}
+            className={`group relative rounded-none overflow-hidden cursor-pointer ${
               project.size === "large" ? "md:col-span-7 aspect-[20/10]" : "md:col-span-5 aspect-[4/5]"
             }`}
           >
@@ -59,6 +62,11 @@ export default function Projects() {
           </div>
         ))}
       </div>
+
+      {/* Project Detail Modal */}
+      <ProjectModal isOpen={!!selectedProject} onClose={() => setSelectedProject(null)}>
+        {selectedProject && <ProjectDetail project={selectedProject} onClose={() => setSelectedProject(null)} />}
+      </ProjectModal>
     </section>
   );
 }
